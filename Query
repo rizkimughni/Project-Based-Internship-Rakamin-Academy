@@ -1,0 +1,31 @@
+CREATE TABLE `pbi-muamalat-bi.final_task_pbi.table_master`
+AS
+SELECT
+  o.Date AS order_date,
+  pc.CategoryName AS category_name,
+  p.ProdName AS product_name,
+  p.Price AS product_price,
+  o.Quantity AS order_qty,
+  p.Price * o.Quantity AS total_sales,
+  SPLIT(c.CustomerEmail, '#')[OFFSET(0)] AS cust_email,
+  c.CustomerCity AS cust_city,
+  c.CustomerState
+FROM
+  `pbi-muamalat-bi.final_task_pbi.orders` AS o
+JOIN `pbi-muamalat-bi.final_task_pbi.customers` AS c
+  ON o.CustomerID = c.CustomerID
+JOIN `pbi-muamalat-bi.final_task_pbi.products` AS p
+  ON o.ProdNumber = p.ProdNumber
+JOIN `pbi-muamalat-bi.final_task_pbi.productcategory` AS pc
+  ON p.Category = pc.CategoryID
+GROUP BY
+  o.Date,
+  pc.CategoryName,
+  p.ProdName,
+  p.Price,
+  o.Quantity,
+  c.CustomerEmail,
+  c.CustomerCity,
+  c.CustomerState
+ORDER BY
+  o.Date ASC;
